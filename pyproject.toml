@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=64", "setuptools_scm[toml]>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "skedm"
+dynamic = ["version"]
+authors = [
+  { name="Joseph Park", email="josephpark@ieee.org" },
+]
+maintainers = [
+  {name = "Joseph Park", email = "JosephPark@IEEE.org"}
+]
+description = "Empirical dynamic modeling (EDM) in scikit-learn parlance."
+readme = "README.md"
+license = {file="LICENSE"}
+requires-python = ">=3.11"
+dependencies = [
+  "numpy",
+  "scipy", 
+  "scikit-learn>=1.7.0",
+  "pandas>=2.0",
+  "matplotlib>=3.7",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: POSIX",
+    "Operating System :: Unix",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+]
+keywords = ['EDM', 'Empirical Dynamic Modeling', 'nonlinear dynamics',
+            'time series', 'state space' ]
+
+[project.urls]
+Homepage      = "https://deepeco.ucsd.edu/"
+Documentation = "https://sugiharalab.github.io/EDM_Documentation/"
+Repository    = "https://github.com/SoftwareLiteracyFoundation/skedm"
+Issues        = "https://github.com/SoftwareLiteracyFoundation/skedm/issues"
+
+[tool.setuptools_scm]
+version_file = "skedm/_version.py"
