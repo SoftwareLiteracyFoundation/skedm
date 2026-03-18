@@ -36,7 +36,6 @@ smp.score(df, df[target])
 ```python
 smp.Projection_.head(3)
     Time  Observations  Predictions  Pred_Variance
-    Time  Observations  Predictions  Pred_Variance
 0  40.00        7.5310     7.561277       0.191294
 1  40.05        6.7717     6.760938       0.242625
 2  40.10        5.7151     5.648007       0.352205
@@ -46,3 +45,4 @@ smp.Projection_.head(3)
 from skedm.aux_func import PlotObsPred
 PlotObsPred(smp.Projection_,E=smp._E,Tp=smp.Tp)
 ```
+<img width="539" height="442" alt="skedm_simplex_demo" src="https://github.com/user-attachments/assets/1716e13f-7e3a-49fc-81ee-aafbd265da72" />
