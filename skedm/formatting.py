@@ -6,6 +6,7 @@ from warnings import warn
 from pandas import DataFrame
 from numpy import append, array, empty, floating, full, integer, nan
 
+from .aux_func import IsIterable
 
 # --------------------------------------------------------------------
 # EDM Methods
@@ -29,7 +30,7 @@ def FormatProjection(self):
         return
 
     N_dim = self._E + 1
-    Tp_magnitude = abs(self.Tp)
+    Tp_magnitude = int(abs(self.Tp))
 
     # ----------------------------------------------------
     # Observations: Insert target data in observations
@@ -200,13 +201,18 @@ def FormatProjection(self):
         coefOut = full((outSize, N_dim), nan)
         SVOut = full((outSize, N_dim), nan)
         # fill coefOut, SVOut with projected values
-        coefOut[predOut_i, :] = self.coefficients
-        SVOut[predOut_i, :] = self.singularValues
+        coefOut[predOut_i, :] = self._coefficients
+        SVOut[predOut_i, :] = self._singularValues
 
         timeDF = DataFrame({"Time": timeOut})
 
+        if IsIterable(self._target):
+            targetName = self._target[0]
+        else:
+            targetName = self._target
+
         colNames = ["C0"]
-        coefNames = [f"∂{self.target[0]}/∂{e}" for e in self.Embedding_.columns]
+        coefNames = [f"∂{targetName}/∂{var}" for var in self.Embedding_.columns]
         for c in coefNames:
             colNames.append(c)
         coefDF = DataFrame(coefOut, columns=colNames)
@@ -214,8 +220,8 @@ def FormatProjection(self):
         colNames = [f"C{i}" for i in range(N_dim)]
         SVDF = DataFrame(SVOut, columns=colNames)
 
-        self.Coefficients = timeDF.join(coefDF)
-        self.SingularValues = timeDF.join(SVDF)
+        self.Coefficients_ = timeDF.join(coefDF)
+        self.SingularValues_ = timeDF.join(SVDF)
 
 
 def ConvertTime(self):

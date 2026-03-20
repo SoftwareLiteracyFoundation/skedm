@@ -44,7 +44,7 @@ def CreateIndices(self):
     # Loop over each lib pair
     # Add rows for library segments, disallowing vectors
     # in disjoint library gap accommodating embedding and Tp
-    embedShift = abs(self.tau) * (self._E - 1)
+    embedShift = int(abs(self.tau) * (self._E - 1))
     lib_i_list = list()
 
     for r in range(len(libPairs)):
@@ -59,10 +59,10 @@ def CreateIndices(self):
 
         if self.Tp < 0:
             if not self.embedded:
-                start = max(start, start + abs(self.Tp) - 1)
+                start = int(max(start, start + abs(self.Tp)) - 1)
         else:
             if r == len(libPairs) - 1:
-                stop = stop - self.Tp
+                stop = stop - int(self.Tp)
 
         libPair_i = [i - 1 for i in range(start, stop + 1)]
 

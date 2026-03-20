@@ -1,12 +1,6 @@
 """
-Class Simplex : projection of target variable from embedding library
-
-To Do:
-Cross-validation splitters: sklearn's KFold, TimeSeriesSplit etc. operate on row
-indices of X and assume lib/pred semantics are not embedded in the estimator.
-Provide a custom SimplexSplitter that wraps lib/pred parameters as a
-BaseCrossValidator to make the estimator composable with GridSearchCV
-However, under default conditions lib = pred = [1,N] KFold etc are fine.
+Class SMap : projection of target variable from embedding library with
+Sequentially Locally Weighted Global Linear Maps (s-map)
 """
 
 # Author: Joseph Park
@@ -18,21 +12,20 @@ from warnings import warn
 from sklearn.base import BaseEstimator, RegressorMixin, _fit_context
 from sklearn.utils.validation import check_is_fitted, validate_data
 from sklearn.utils import Tags, InputTags, TargetTags, RegressorTags
-from numpy import array, divide, exp, isnan, fmax, ndarray, power, subtract, sum, zeros
-from numpy import isinf, isnan, ndarray
+
+from numpy import apply_along_axis, insert, isnan, isfinite, exp, ndarray
+from numpy import full, integer, linspace, mean, nan, power, sum
+from numpy.linalg import lstsq  # from scipy.linalg import lstsq
 from scipy.sparse import issparse
-from pandas import DataFrame
+from pandas import DataFrame, Series, concat
 
 from .embed import Embed
 
 
-class Simplex(RegressorMixin, BaseEstimator):
-    """Simplex projection of target variable from embedding library
+class SMap(RegressorMixin, BaseEstimator):
+    """S-map projection of target variable from embedding library
 
-    Simplex is a nearest neighbors projection from a target (query) point in
-    a state space (library) to time Tp. The simplex is an E+1 dimensional
-    geometric object in the state space with the n=E+1 nearest neighbors
-    as vertices. Each neighbor represents an E-dimensional vector.
+    S-map ().
 
     Parameters
     ----------
@@ -41,6 +34,9 @@ class Simplex(RegressorMixin, BaseEstimator):
 
     target : str
         DataFrame column name of target feature to predict
+
+    theta : float
+        Exponential scale factor for knn weight kernel
 
     E : int
         Embedding dimension applied in time delay embedding
@@ -65,7 +61,7 @@ class Simplex(RegressorMixin, BaseEstimator):
 
     knn : int
         Number of k-nearest neighbors for the simplex. If default knn=0 it is
-        set to E+1.
+        set to E+1 for Simplex, and to N_obs for SMap.
 
     exclusionRadius : int
         Temporal exclusion radius for nearest neighbors. Neighbors closer than
@@ -99,6 +95,12 @@ class Simplex(RegressorMixin, BaseEstimator):
         DataFrame with columns 'Time', 'Observations', 'Predictions', 'Pred_Variance'
         of the Simplex projection
 
+    Coefficients_ : DataFrame
+        DataFrame with columns "Time" and E+1 SMap coefficents at each time step
+
+    SingularValues_ : DataFrame
+        DataFrame with columns "Time" and E+1 SMap singular values at each time step
+
     lib_i_ : ndarray
         List of library indices identifying time points from which embedding
         vectors are used for the projection
@@ -119,28 +121,30 @@ class Simplex(RegressorMixin, BaseEstimator):
 
     Examples
     --------
-    >>> from skedm import Simplex
+    >>> from skedm import SMap
     >>> from pandas import DataFrame
     >>> df = DataFrame({'time':[t for t in range(1,21)],
                         'x':[1,1,3,4,5,5,6,8,3,3,2,6,5,5,9,3,5,1,8,2],
                         'y':[5,5,7,8,6,6,7,8,2,2,2,8,3,3,7,5,3,1,1,1]})
-    >>> smplx = Simplex(columns='x',target='y',E=2)
-    >>> smplx.fit(df)
+    >>> smap = SMap(columns='x',target='y',E=2,theta=3.)
+    >>> smap.fit(df)
     Simplex(E=2, columns='x', target='y')
-    >>> smplx.predict(df)
+    >>> smap.predict(df)
 
     Notes
     -----
 
     See Also
     --------
-    https://en.wikipedia.org/wiki/Empirical_dynamic_modeling#Simplex
+    https://en.wikipedia.org/wiki/Empirical_dynamic_modeling#S-Map
 
     Reference
     ---------
-    Sugihara, George; May, Robert M. (April 1990).
-    "Nonlinear forecasting as a way of distinguishing chaos from measurement
-    error in time series". Nature. 344 (6268): 734–741. doi:10.1038/344734a0.
+    Sugihara, George (1994).
+    Nonlinear forecasting for the classification of natural time series.
+    Philosophical Transactions of the Royal Society of London.
+    Series A: Physical and Engineering Sciences. 348 (1688): 477–495.
+    doi:10.1098/rsta.1994.0106
     """
 
     # Used to validate parameter within the `_fit_context` decorator.
@@ -155,6 +159,8 @@ class Simplex(RegressorMixin, BaseEstimator):
         Tp=1,
         lib=None,
         pred=None,
+        theta=0.0,
+        solver=None,
         knn=0,
         exclusionRadius=0,
         embedded=False,
@@ -171,6 +177,8 @@ class Simplex(RegressorMixin, BaseEstimator):
         self.Tp = Tp
         self.knn = knn
         self.tau = tau
+        self.theta = theta
+        self.solver = solver
         self.exclusionRadius = exclusionRadius
         self.embedded = embedded
         self.noTime = noTime
@@ -205,6 +213,7 @@ class Simplex(RegressorMixin, BaseEstimator):
         check_is_fitted(self)
         return np.array([self._target + "_pred"], dtype=object)
 
+    # -------------------------------------------------------------------
     @_fit_context(prefer_skip_nested_validation=True)
     def fit(self, X, y=None):
         """Initialize lib & pred indices, embed data, find neighbors
@@ -234,13 +243,16 @@ class Simplex(RegressorMixin, BaseEstimator):
         self._E = copy(self.E)
         self._knn = copy(self.knn)
         self._noTime = copy(self.noTime)
-        self._name = "Simplex"
+        self._name = "SMap"
 
-        self._validate_params()  # Additional parameter validation in self.Validate()
+        self._validate_params()  # Additional validation in self.Validate()
         self.Validate_Xy(X, y)
 
         self.Embedding_ = None  # DataFrame, includes nan
-        self.Projection_ = None  # DataFrame Simplex output
+        self.Projection_ = None  # DataFrame Simplex & SMap output
+        self.Coefficients_ = None  # DataFrame SMap coefficients
+        self.SingularValues_ = None  # DataFrame SMap
+
         self.lib_i_ = None  # ndarray library indices
         self.pred_i_ = None  # ndarray prediction indices : nan removed
         self.knn_neighbors_ = None  # ndarray (N_pred, knn) sorted
@@ -255,9 +267,12 @@ class Simplex(RegressorMixin, BaseEstimator):
         self._noTime = False  # First column expected to be time index, set True if not
         self._xRadKnnFactor = 5  # exclusionRadius knn factor
         self._kdTree = None  # SciPy KDTree (k-dimensional tree)
-        self._projection = None  # ndarray Simplex output
-        self._variance = None  # ndarray Simplex output
+        self._projection = None  # ndarray Simplex & SMap output
+        self._variance = None  # ndarray Simplex & SMap output
+        self._coefficients = None  # ndarray SMap coefficients
+        self._singularValues = None  # ndarray
         self._targetVec = None  # ndarray entire record
+        self._targetVecNan = False  # True if targetVec has nan : SMap only
         self._time = None  # ndarray entire record numerically operable
 
         if y is None:  # In application y=None, in check_estimator() skip Validate()
@@ -273,7 +288,7 @@ class Simplex(RegressorMixin, BaseEstimator):
 
     # -------------------------------------------------------------------
     def predict(self, X):
-        """Simplex projection of target variable from embedding library
+        """SMap projection of target variable from embedding library
 
         Parameters
         ----------
@@ -284,7 +299,7 @@ class Simplex(RegressorMixin, BaseEstimator):
         -------
         y : ndarray, shape (n_samples,)
         """
-        # Check if fit had been called
+        # Check if fit has been called
         check_is_fitted(self)
 
         # Set reset=False to not overwrite `n_features_in_` and
@@ -299,6 +314,13 @@ class Simplex(RegressorMixin, BaseEstimator):
             __target = "y"  # Terrible. How do we fix this?
         self._targetVec = self._Data[__target]
 
+        # If targetVec has nan, set flag for SMap internals
+        if any(isnan(self._targetVec.to_numpy())):
+            self._targetVecNan = True
+
+        if self.solver is None:
+            self.solver = lstsq
+
         self.Project()
         self.FormatProjection()
 
@@ -306,38 +328,138 @@ class Simplex(RegressorMixin, BaseEstimator):
 
     # -------------------------------------------------------------------
     def Project(self):
-        """Simplex Projection
-        Sugihara & May (1990) doi.org/10.1038/344734a0"""
-        # First column of knn_distances is minimum distance of all N pred rows
-        minDistances = self.knn_distances_[:, 0]
-        # In case there is 0 in minDistances: minWeight = 1E-6
-        minDistances = fmax(minDistances, 1e-6)
+        """For each prediction row compute projection as the linear
+        combination of regression coefficients (C) of weighted
+        embedding vectors (A) against target vector (B) : AC = B.
 
-        # Divide each column of the N x k knn_distances matrix by N row
-        # column vector minDistances
-        scaledDistances = divide(self.knn_distances_, minDistances[:, None])
+        Weights reflect the SMap theta localization of the knn
+        for each prediction. Default knn = len( lib_i ).
 
-        weights = exp(-scaledDistances)  # N x k
-        weightRowSum = sum(weights, axis=1)  # N x 1
+        Matrix A has (weighted) constant (1) first column
+        to enable a linear intercept/bias term.
 
-        # Matrix of knn_neighbors + Tp defines library target values
-        knn_neighbors_Tp = self.knn_neighbors_ + self.Tp  # N x k
-        libTargetValues = zeros(knn_neighbors_Tp.shape)  # N x k
+        Sugihara (1994) doi.org/10.1098/rsta.1994.0106
+        """
+        N_pred = len(self.pred_i_)
+        N_dim = self._E + 1
 
-        # for j in range( knn_neighbors_Tp.shape[1] ) : # for each column j of k
-        #    libTargetValues[ :, j ][ :, None ] = \
-        #        self._targetVec[ knn_neighbors_Tp[ :, j ] ]
+        self._projection = full(N_pred, nan, dtype=float)
+        self._variance = full(N_pred, nan, dtype=float)
+        self._coefficients = full((N_pred, N_dim), nan, dtype=float)
+        self._singularValues = full((N_pred, N_dim), nan, dtype=float)
 
-        for j in range(knn_neighbors_Tp.shape[1]):  # for each column j of k
-            libTargetValues[:, j] = self._targetVec[knn_neighbors_Tp[:, j]]
+        embedding = self.Embedding_.to_numpy()  # reference to ndarray
 
-        # Projection is average of weighted knn library target values
-        self._projection = sum(weights * libTargetValues, axis=1) / weightRowSum
+        # Compute average distance for knn pred rows into a vector
+        distRowMean = mean(self.knn_distances_, axis=1)
 
-        # "Variance" estimate assuming weights are probabilities
-        libTargetPredDiff = subtract(libTargetValues, self._projection[:, None])
-        deltaSqr = power(libTargetPredDiff, 2)
-        self._variance = sum(weights * deltaSqr, axis=1) / weightRowSum
+        # Weight matrix of row vectors
+        if self.theta == 0:
+            W = full(self.knn_distances_.shape, 1.0, dtype=float)
+        else:
+            distRowScale = self.theta / distRowMean
+            W = exp(-distRowScale[:, None] * self.knn_distances_)
+
+        # knn_neighbors + Tp
+        knn_neighbors_Tp = self.knn_neighbors_ + self.Tp  # N_pred x knn
+
+        # Function to select targetVec for rows of Boundary condition matrix
+        def GetTargetRow(knn_neighbor_row):
+            return self._targetVec[knn_neighbor_row][:]
+
+        # Boundary condition matrix of knn + Tp targets : N_pred x knn
+        B = apply_along_axis(GetTargetRow, 1, knn_neighbors_Tp)
+
+        if self._targetVecNan:
+            # If there are nan in the targetVec need to remove them
+            # from B since Solver returns nan. B_valid is matrix of
+            # B row booleans of valid data for pred rows
+            # Function to apply isfinite to rows
+            def FiniteRow(B_row):
+                return isfinite(B_row)
+
+            B_valid = apply_along_axis(FiniteRow, 1, B)
+
+        # Weighted boundary condition matrix of targets : N_pred x knn
+        wB = W * B
+
+        # Process each prediction row
+        for row in range(N_pred):
+            # Allocate array
+            A = full((self._knn, N_dim), nan, dtype=float)
+
+            A[:, 0] = W[row, :]  # Intercept bias terms in column 0 (weighted)
+
+            libRows = self.knn_neighbors_[row, :]  # 1 x knn
+
+            for j in range(1, N_dim):
+                A[:, j] = W[row, :] * embedding[libRows, j - 1]
+
+            wB_ = wB[row, :]
+
+            if self._targetVecNan:
+                # Redefine A, wB_ to remove targetVec nan
+                valid_i = B_valid[row, :]
+                A = A[valid_i, :]
+                wB_ = wB[row, valid_i]
+
+            # Linear mapping of theta weighted embedding A onto weighted target B
+            C, SV = self.Solver(A, wB_)
+
+            self._coefficients[row, :] = C
+            self._singularValues[row, :] = SV
+
+            # Prediction is local linear projection.
+            if isnan(C[0]):
+                projection_ = 0
+            else:
+                projection_ = C[0]
+
+            for e in range(1, N_dim):
+                projection_ = projection_ + C[e] * embedding[self.pred_i_[row], e - 1]
+
+            self._projection[row] = projection_
+
+            # "Variance" estimate assuming weights are probabilities
+            if self._targetVecNan:
+                deltaSqr = power(B[row, valid_i] - projection_, 2)
+                self._variance[row] = sum(W[row, valid_i] * deltaSqr) / sum(
+                    W[row, valid_i]
+                )
+            else:
+                deltaSqr = power(B[row, :] - projection_, 2)
+                self._variance[row] = sum(W[row] * deltaSqr) / sum(W[row])
+
+    # -------------------------------------------------------------------
+    def Solver(self, A, wB):
+        """Call SMap solver. Default is numpy.lstsq"""
+
+        if (
+            self.solver.__class__.__name__ in ["function", "_ArrayFunctionDispatcher"]
+            and self.solver.__name__ == "lstsq"
+        ):
+            # numpy default lstsq or scipy lstsq
+            C, residuals, rank, SV = self.solver(A, wB, rcond=None)
+            return C, SV
+
+        # Otherwise, sklearn.linear_model passed as solver
+        # Coefficient matrix A has weighted unity vector in the first
+        # column to create a bias (intercept) term. sklearn.linear_model's
+        # include an intercept term by default. Ignore first column of A.
+        LM = self.solver.fit(A[:, 1:], wB)
+        C = LM.coef_
+        if hasattr(LM, "intercept_"):
+            C = insert(C, 0, LM.intercept_)
+        else:
+            C = insert(C, 0, nan)  # Insert nan for intercept term
+
+        if self.solver.__class__.__name__ == "LinearRegression":
+            SV = LM.singular_  # Only LinearRegression has singular_
+            SV = insert(SV, 0, nan)
+        else:
+            SV = None  # full( A.shape[0], nan )
+
+        return C, SV
 
     # -------------------------------------------------------------------
     def score(self, X, y, sample_weight=None):
