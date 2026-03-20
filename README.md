@@ -16,6 +16,7 @@ df.head(3)
 1  10.05  3.5108  2.2832  4.0464  7.8964 -2.1931
 2  10.10  4.1666  3.7791  4.7456  6.8123 -1.8866
 ```
+<img width="681" height="686" alt="Lorenz5D_V1_V2_V3" src="https://github.com/user-attachments/assets/ba3b7808-cb53-4f07-bdde-8e7c28124567" />
 
 We wish to predict variable (`V2`) without `V2` itself but from the other four variables, a four dimensional embedding of `[V1, V3, V4, V5]`.
 
@@ -23,7 +24,7 @@ We wish to predict variable (`V2`) without `V2` itself but from the other four v
 
 #### SMap Projection
 
-Sequentially locally weighted global linear maps (s-map) facilitate prediction, quantification of intervariable dependencies (Jacobians) as well as scale of nonlinearity of multivariate or time-lagged dynamical systems ([Sugihara 1994](https://royalsocietypublishing.org/doi/abs/10.1098/rsta.1994.0106)). Here we demonstrate `skedm.SMap` in multivariate time series prediction and variable interaction. To specify a multivariate embedding instead of a time-delay embedding we set the parameter `embedded=True`. The embedding is constructed from the specified `columns` and we use a nearest neighbor localization parameter `theta=8` characterizing local neighbor scale in the embedding.
+Sequentially locally weighted global linear maps (s-map) facilitate prediction, and quantification of both intervariable dependencies (Jacobians) and the scale of nonlinearity of multivariate dynamical systems ([Sugihara 1994](https://royalsocietypublishing.org/doi/abs/10.1098/rsta.1994.0106)). Here we demonstrate `skedm.SMap` in multivariate time series prediction and variable interaction. To specify a multivariate embedding instead of a time-delay embedding we set the parameter `embedded=True`. The embedding is constructed from the specified `columns` and we use a nearest neighbor localization parameter `theta=8` characterizing local neighbor scale in the embedding.
 
 ```python
 from skedm import SMap
@@ -58,6 +59,7 @@ from skedm.aux_func import PlotObsPred, PlotCoeff
 PlotObsPred(smap.Projection_, E=smap._E, Tp=smap.Tp)
 PlotCoeff(smap.Coefficients_, "Lorenz 5D", E=smap._E, Tp=smap.Tp)
 ```
+<img width="997" height="402" alt="Lorenz5D_SMap_pred_coef" src="https://github.com/user-attachments/assets/a0116505-9549-4740-963e-a782123018c5" />
 
 #### Comparison to GaussianProcessRegressor
 
@@ -85,7 +87,7 @@ Derivatives = concat([df, DataFrame(partialDeriv)], axis=1)
 ```
 
 Comparison of SMap and Gaussian process estimates of the partials show both provide reasonable results however, close examination reveals SMap estimates to be more accurate than GP. Further, GP requires both regressing the dynamics and forming a suitable estimate of the derivative based on an ad-hoc perturbation (`epsilon`). In SMap the scale parameter `theta` can be optimally determined to best represent the underlying dynamics in the embedding naturally yielding scale appropriate Jacobians and singular values of the eigendecompositions useful for interaction and change detection. 
-
+<img width="831" height="475" alt="Lorenz5D_SMap_GPR" src="https://github.com/user-attachments/assets/67278a6b-536e-46da-9bea-533377b7f244" />
 
 ---
 
