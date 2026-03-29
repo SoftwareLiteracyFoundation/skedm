@@ -1,1 +1,4 @@
+sphinx-design
+sphinx-prompt
+sphinx-gallery
 -e .
