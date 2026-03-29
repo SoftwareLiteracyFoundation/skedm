@@ -2,4 +2,5 @@ sphinx-design
 sphinx-prompt
 sphinx-gallery
 numpydoc
+pydata-sphinx-theme
 -e .
