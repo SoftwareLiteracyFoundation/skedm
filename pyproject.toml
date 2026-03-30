@@ -3,7 +3,7 @@ requires = ["setuptools>=64", "setuptools_scm[toml]>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "skedm"
+name = "sciedm"
 dynamic = ["version"]
 authors = [
   { name="Joseph Park", email="josephpark@ieee.org" },
@@ -38,8 +38,8 @@ keywords = ['EDM', 'Empirical Dynamic Modeling', 'nonlinear dynamics',
 [project.urls]
 Homepage      = "https://deepeco.ucsd.edu/"
 Documentation = "https://sugiharalab.github.io/EDM_Documentation/"
-Repository    = "https://github.com/SoftwareLiteracyFoundation/skedm"
-Issues        = "https://github.com/SoftwareLiteracyFoundation/skedm/issues"
+Repository    = "https://github.com/SoftwareLiteracyFoundation/sciedm"
+Issues        = "https://github.com/SoftwareLiteracyFoundation/sciedm/issues"
 
 [tool.setuptools_scm]
-version_file = "skedm/_version.py"
+version_file = "sciedm/_version.py"

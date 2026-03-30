@@ -6,12 +6,12 @@ from   warnings import filterwarnings, catch_warnings
 
 from numpy  import nan, array, array_equal
 from pandas import DataFrame, read_csv
-import skedm
+import sciedm
 
 #----------------------------------------------------------------
 # Suite of tests
 #----------------------------------------------------------------
-class test_skedm( unittest.TestCase ):
+class test_sciedm( unittest.TestCase ):
     '''The examples/ should also run
 
     NOTE: Bizarre default of unittest class presumes
@@ -19,7 +19,7 @@ class test_skedm( unittest.TestCase ):
     '''
     # JP How to pass command line arg to class? verbose = True
     def __init__( self, *args, **kwargs):
-        super( test_skedm, self ).__init__( *args, **kwargs )
+        super( test_sciedm, self ).__init__( *args, **kwargs )
 
     #------------------------------------------------------------
     # 
@@ -81,7 +81,7 @@ class test_skedm( unittest.TestCase ):
         '''Simplex 1'''
         if self.verbose : print ( " --- Simplex 1 ---" )
         df_ = self.Lorenz5D
-        spx = skedm.Simplex( columns = 'V1', target = 'V5',
+        spx = sciedm.Simplex( columns = 'V1', target = 'V5',
                              lib = [1,300], pred = [301,310], E = 5 )
         spx.fit(df_)
         rho = spx.score(df_, df_['V5'])
@@ -90,7 +90,7 @@ class test_skedm( unittest.TestCase ):
         '''Simplex 2'''
         if self.verbose : print ( "--- Simplex 2 ---" )
         df_ = self.Lorenz5D
-        spx = skedm.Simplex( columns = ['V1'], target = 'V5',
+        spx = sciedm.Simplex( columns = ['V1'], target = 'V5',
                              lib = [1, 300], pred = [301, 310], E = 5 )
         spx.fit(df_)
         rho = spx.score(df_, df_['V5'])
@@ -99,7 +99,7 @@ class test_skedm( unittest.TestCase ):
         '''Simplex 3'''
         if self.verbose : print ( "--- Simplex 3 ---" )
         df_ = self.Lorenz5D
-        spx = skedm.Simplex( columns = ['V1','V3'], target = 'V5',
+        spx = sciedm.Simplex( columns = ['V1','V3'], target = 'V5',
                              lib = [1, 300], pred = [301, 310], E = 5 )
         spx.fit(df_)
         rho = spx.score(df_, df_['V5'])
@@ -108,7 +108,7 @@ class test_skedm( unittest.TestCase ):
         '''Simplex 5'''
         if self.verbose : print ( "--- Simplex 4 ---" )
         df_ = self.Lorenz5D
-        spx = skedm.Simplex( columns = 'V1', target = 'V5',
+        spx = sciedm.Simplex( columns = 'V1', target = 'V5',
                              lib = [1, 300], pred = [301, 310], E = 5, knn = 0 )
         spx.fit(df_)
         rho = spx.score(df_, df_['V5'])
@@ -117,7 +117,7 @@ class test_skedm( unittest.TestCase ):
         '''Simplex 6'''
         if self.verbose : print ( "--- Simplex 5 ---" )
         df_ = self.Lorenz5D
-        spx = skedm.Simplex( columns = 'V1', target = 'V5',
+        spx = sciedm.Simplex( columns = 'V1', target = 'V5',
                              lib = [1, 300], pred = [301, 310], E = 5, tau = -2 )
         spx.fit(df_)
         rho = spx.score(df_, df_['V5'])
@@ -126,7 +126,7 @@ class test_skedm( unittest.TestCase ):
         '''embedded = False'''
         if self.verbose : print ( "--- Simplex 6 embedded = False ---" )
         df_ = self.block3sp
-        spx = skedm.Simplex(columns = "x_t", target = "x_t",
+        spx = sciedm.Simplex(columns = "x_t", target = "x_t",
                             lib=[1, 100], pred=[101, 195], E=3, Tp=1, knn=0, tau=-1 )
         spx.fit(df_)
         pred = spx.predict(df_)
@@ -140,7 +140,7 @@ class test_skedm( unittest.TestCase ):
         '''embedded = True'''
         if self.verbose : print ( "--- Simplex 7 embedded = True ---" )
         df_ = self.block3sp
-        spx = skedm.Simplex(columns = ["x_t", "y_t", "z_t"], target = "x_t",
+        spx = sciedm.Simplex(columns = ["x_t", "y_t", "z_t"], target = "x_t",
                             lib=[1, 99], pred=[100, 198], E=3, Tp=1, embedded = True )
         spx.fit(df_)
         pred = spx.predict(df_)
@@ -154,7 +154,7 @@ class test_skedm( unittest.TestCase ):
         '''negative Tp'''
         if self.verbose : print ( "--- Simplex 8 negative Tp ---" )
         df_ = self.block3sp
-        spx = skedm.Simplex( columns = "x_t", target = "y_t",
+        spx = sciedm.Simplex( columns = "x_t", target = "y_t",
                              lib=[1, 100], pred=[50, 80], E=3, Tp=-2 )
         spx.fit(df_)
         pred = spx.predict(df_)
@@ -169,7 +169,7 @@ class test_skedm( unittest.TestCase ):
     #     '''validLib'''
     #     if self.verbose : print ( "--- Simplex 9 validLib ---" )
     #     df_ = self.circle
-    #     df = skedm.Simplex( dataFrame = df_, columns = 'x', target = 'x',
+    #     df = sciedm.Simplex( dataFrame = df_, columns = 'x', target = 'x',
     #                       lib = [1,200], pred = [1,200], E = 2, Tp = 1,
     #                       validLib = df_.eval('x > 0.5 | x < -0.5') )
 
@@ -184,7 +184,7 @@ class test_skedm( unittest.TestCase ):
         '''disjoint lib'''
         if self.verbose : print ( "--- Simplex 10 disjoint lib ---" )
         df_ = self.circle
-        spx = skedm.Simplex(columns = 'x', target = 'x',
+        spx = sciedm.Simplex(columns = 'x', target = 'x',
                             lib = [1,40, 50,130], pred = [80,170],
                             E = 2, Tp = 1, tau = -3 )
         spx.fit(df_)
@@ -202,7 +202,7 @@ class test_skedm( unittest.TestCase ):
         df_ = self.Lorenz5D
         df_.iloc[ [8,50,501], [1,2] ] = nan
 
-        spx = skedm.Simplex(columns='V1', target = 'V2',
+        spx = sciedm.Simplex(columns='V1', target = 'V2',
                             E = 5, Tp = 2, lib = [1,50,101,200,251,500],
                             pred = [1,10,151,155,551,555,881,885,991,1000] )
         spx.fit(df_)
@@ -218,7 +218,7 @@ class test_skedm( unittest.TestCase ):
         '''exclusion radius'''
         if self.verbose : print ( "--- Simplex 12 exclusion radius ---" )
         df_ = self.circle
-        spx = skedm.Simplex(columns = 'x', target = 'y',
+        spx = sciedm.Simplex(columns = 'x', target = 'y',
                             lib = [1,100], pred = [21,81], E = 2, Tp = 1,
                             exclusionRadius = 5 )
         spx.fit(df_)
@@ -238,7 +238,7 @@ class test_skedm( unittest.TestCase ):
         dfn.iloc[ [5,6,12], 1 ] = nan
         dfn.iloc[ [10,11,17], 2 ] = nan
 
-        spx = skedm.Simplex(columns = 'x', target = 'y',
+        spx = sciedm.Simplex(columns = 'x', target = 'y',
                             lib = [1,100], pred = [1,95], E = 2, Tp = 1 )
         spx.fit(dfn)
         pred = spx.predict(dfn)
@@ -258,7 +258,7 @@ class test_skedm( unittest.TestCase ):
         dfn.iloc[ [5,6,12], 1 ] = nan
         dfn.iloc[ [10,11,17], 2 ] = nan
 
-        spx = skedm.Simplex(columns = 'y', target = 'x',
+        spx = sciedm.Simplex(columns = 'y', target = 'x',
                             lib = [1,200], pred = [1,195], E = 2, Tp = 1 )
         spx.fit(dfn)
         pred = spx.predict(df_)
@@ -275,7 +275,7 @@ class test_skedm( unittest.TestCase ):
         if self.verbose : print ( "--- Simplex 15 DateTime ---" )
         df_ = self.SumFlow
 
-        spx = skedm.Simplex(columns = 'SumFlow', target = 'SumFlow',
+        spx = sciedm.Simplex(columns = 'SumFlow', target = 'SumFlow',
                             lib = [1,800], pred = [801,1001], E = 3, Tp = 1 )
         spx.fit(df_)
         pred = spx.predict(df_)
@@ -293,7 +293,7 @@ class test_skedm( unittest.TestCase ):
         if self.verbose : print ( "--- Simplex 16 knn = 1 ---" )
         df_ = self.Lorenz5D
 
-        spx = skedm.Simplex(columns='V5', target = 'V5',
+        spx = sciedm.Simplex(columns='V5', target = 'V5',
                             lib = [301,400], pred = [350,355],
                             knn = 1, embedded = True)
         spx.fit(df_)
@@ -311,7 +311,7 @@ class test_skedm( unittest.TestCase ):
         x   = [i+1 for i in range(1000)]
         df_ = DataFrame({'Time':df_['Time'],'X':x,'V1':df_['V1']})
 
-        spx = skedm.Simplex(columns='X', target = 'V1',
+        spx = sciedm.Simplex(columns='X', target = 'V1',
                             lib = [1,100], pred = [101,110],
                             E = 5, exclusionRadius = 10)
         spx.fit(df_)
@@ -328,7 +328,7 @@ class test_skedm( unittest.TestCase ):
         '''SMap'''
         if self.verbose : print ( "--- SMap 1 ---" )
         df_ = self.circle
-        S = skedm.SMap( columns = 'x', target = 'x',
+        S = sciedm.SMap( columns = 'x', target = 'x',
                       lib = [1,100], pred = [110,160], E = 4, Tp = 1,
                       tau = -1, theta = 3. )
         S.fit(df_)
@@ -344,7 +344,7 @@ class test_skedm( unittest.TestCase ):
         '''SMap embedded = True'''
         if self.verbose : print ( "--- SMap 2 embedded = True ---" )
         df_ = self.circle
-        S = skedm.SMap( columns = ['x', 'y'], target = 'x',
+        S = sciedm.SMap( columns = ['x', 'y'], target = 'x',
                       lib = [1,200], pred = [1,200], E = 2, Tp = 1,
                       tau = -1, embedded = True, theta = 3. )
 
@@ -371,7 +371,7 @@ class test_skedm( unittest.TestCase ):
         dfn.iloc[ [5,6,12], 1 ] = nan
         dfn.iloc[ [10,11,17], 2 ] = nan
 
-        S = skedm.SMap( columns = 'x', target = 'y',
+        S = sciedm.SMap( columns = 'x', target = 'y',
                         lib = [1,50], pred = [1,50], E = 2, Tp = 1,
                         tau = -1, theta = 3. )
 
@@ -391,7 +391,7 @@ class test_skedm( unittest.TestCase ):
         if self.verbose : print ( "--- SMap 4 noTime ---" )
         df_ = self.circle_noTime
 
-        S = skedm.SMap( columns = 'x', target = 'y',
+        S = sciedm.SMap( columns = 'x', target = 'y',
                         lib = [1,100], pred = [101,150], E = 2,
                         theta = 3, noTime = True )
 
@@ -414,7 +414,7 @@ class test_skedm( unittest.TestCase ):
 
             if self.verbose : print ( "--- CCM 1 ---" )
             df_ = self.sardine_anchovy_sst
-            c = skedm.CCM( columns = 'anchovy',target = 'np_sst',
+            c = sciedm.CCM( columns = 'anchovy',target = 'np_sst',
                            libSizes = [10,20,30,40,50,60,70,75], sample = 100,
                            E = 3, Tp = 0, tau = -1, random_state = 777 )
             ccm = c.fit_transform(df_)
@@ -432,7 +432,7 @@ class test_skedm( unittest.TestCase ):
 
     #         if self.verbose : print ( "--- CCM 2 multivariate ---" )
     #         df_ = self.Lorenz5D
-    #         c = skedm.CCM( columns = ['V3','V5'], target = 'V1',
+    #         c = sciedm.CCM( columns = ['V3','V5'], target = 'V1',
     #                        libSizes = [20, 200, 500, 950], sample = 30, E = 5,
     #                        Tp = 10, tau = -5, random_state = 777 )
     #         ccm = c.fit_transform(df_)
@@ -455,7 +455,7 @@ class test_skedm( unittest.TestCase ):
             dfn.iloc[ [10,11,17], 2 ] = nan
 
             libSizes = [_ for _ in range(10,191,10)]
-            c = skedm.CCM( columns = 'x', target = 'y',
+            c = sciedm.CCM( columns = 'x', target = 'y',
                            libSizes = libSizes, sample = 20, E = 2,
                            Tp = 5, tau = -1, random_state = 777 )
             ccm = c.fit_transform(dfn)
@@ -474,7 +474,7 @@ class test_skedm( unittest.TestCase ):
 
             if self.verbose : print ( "--- EmbedDimension ---" )
             df_ = self.Lorenz5D
-            e = skedm.EmbedDimension(columns='V1', target='V1',
+            e = sciedm.EmbedDimension(columns='V1', target='V1',
                                      maxE = 12, lib = [1, 500], pred=[501, 800],
                                      Tp = 15, tau = -5, exclusionRadius = 20,
                                      n_jobs = 10)
@@ -494,7 +494,7 @@ class test_skedm( unittest.TestCase ):
 
             if self.verbose : print ( "--- Predict ---" )
             df_ = self.TentMapNoise
-            p = skedm.PredictNonlinear( columns = 'TentMap', target = 'TentMap',
+            p = sciedm.PredictNonlinear( columns = 'TentMap', target = 'TentMap',
                                         lib = [1, 500], pred = [501,800], E = 4,
                                         Tp = 1, tau = -1, n_jobs = 10,
                                         theta = [0.01,0.1,0.3,0.5,0.75,1,1.5,

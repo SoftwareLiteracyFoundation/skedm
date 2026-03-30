@@ -74,4 +74,4 @@ target/
 .LSOverride
 
 # auto-generated files
-skedm/_version.py
+sciedm/_version.py

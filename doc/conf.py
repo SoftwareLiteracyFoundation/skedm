@@ -6,16 +6,16 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('../skedm'))
+sys.path.insert(0, os.path.abspath('../sciedm'))
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 from importlib.metadata import version as get_version
 
-project = "skedm: scikit-learn compatible EDM"
+project = "sciedm: scikit-learn compatible EDM"
 copyright = "2026 J Park"
 author = "J Park"
-release = get_version('skedm')
+release = get_version('sciedm')
 version = ".".join(release.split(".")[:3])
 
 # -- General configuration ---------------------------------------------------
@@ -46,11 +46,11 @@ default_role = "literal"
 
 html_theme = "pydata_sphinx_theme"
 html_static_path = ["_static"]
-html_style = "css/skedm.css"
+html_style = "css/sciedm.css"
 html_logo = "_static/img/logo.png"
 # html_favicon = "_static/img/favicon.ico"
 html_css_files = [
-    "css/skedm.css",
+    "css/sciedm.css",
 ]
 html_sidebars = {
     "quick_start": [],
@@ -60,7 +60,7 @@ html_sidebars = {
 
 html_theme_options = {
     "external_links": [],
-    "github_url": "https://github.com/SoftwareLiteracyFoundation/skedm",
+    "github_url": "https://github.com/SoftwareLiteracyFoundation/sciedm",
     # "twitter_url": "https://twitter.com/pandas_dev",
     "use_edit_page_button": True,
     "show_toc_level": 1,
@@ -69,7 +69,7 @@ html_theme_options = {
 
 html_context = {
     "github_user": "SoftwareLiteracyFoundation",
-    "github_repo": "skedm",
+    "github_repo": "sciedm",
     "github_version": "main",
     "doc_path": "doc",
 }
@@ -108,9 +108,9 @@ intersphinx_mapping = {
 plot_gallery = True
 
 sphinx_gallery_conf = {
-    "doc_module": "skedm",
+    "doc_module": "sciedm",
     "backreferences_dir": os.path.join("generated"),
     "examples_dirs": "../examples",
     "gallery_dirs": "auto_examples",
-    "reference_url": {"skedm": None},
+    "reference_url": {"sciedm": None},
 }

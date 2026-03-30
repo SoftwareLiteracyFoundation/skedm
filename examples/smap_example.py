@@ -12,9 +12,9 @@ Two use cases:
 from pandas import read_csv
 from matplotlib import pyplot as plt
 
-from skedm import SMap
+from sciedm import SMap
 
-df = read_csv("../skedm/data/Lorenz5D.csv")
+df = read_csv("../sciedm/data/Lorenz5D.csv")
 
 # library (training) and prediction (test) sets: unit-offset row number [start,stop]
 lib, pred = [1,500], [801,900]
@@ -31,7 +31,7 @@ smp2.fit(df)
 rho2 = smp2.score(df, df['V3'])
 
 # Plot
-from skedm.aux_func import PlotObsPred, PlotCoeff
+from sciedm.aux_func import PlotObsPred, PlotCoeff
 fig, ax = plt.subplots(2, 2, sharex=True, figsize=(8.5,6))
 (ax1, ax2, ax3, ax4) = (ax[0,0], ax[0,1], ax[1,0], ax[1,1])
 

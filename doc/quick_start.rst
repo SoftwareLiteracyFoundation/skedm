@@ -8,20 +8,20 @@ Getting started
 scikit-learn compatible EDM
 ===========================
 
-Download skedm
+Download sciedm
 --------------
 
-Clone the ``skedm`` repository:
+Clone the ``sciedm`` repository:
 
 .. prompt:: bash $
 
-  git clone https://github.com/SoftwareLiteracyFoundation/skedm
+  git clone https://github.com/SoftwareLiteracyFoundation/sciedm
 
-Install `skedm`:
+Install `sciedm`:
 
 .. prompt:: bash $
 
-  cd skedm
+  cd sciedm
   python -m pip install .
 
 

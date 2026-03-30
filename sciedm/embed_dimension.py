@@ -101,7 +101,7 @@ class EmbedDimension(TransformerMixin, BaseEstimator):
 
     Examples
     --------
-    >>> from skedm import EmbedDimension
+    >>> from sciedm import EmbedDimension
     >>> from pandas import read_csv
     >>> df = read_csv('data/S12CD-S333-SumFlow_1980-2005.csv')
     >>> embd = EmbedDimension(columns='SumFlow', target='SumFlow',

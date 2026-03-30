@@ -10,7 +10,7 @@ from numpy import any, array, isinf, isnan, ndarray
 from .aux_func import IsIterable
 
 
-# skedm.simplex .smap method
+# sciedm.simplex .smap method
 def Validate(self):
     """Validate DataFrame columns/target in .fit()"""
 
@@ -38,7 +38,7 @@ def Validate(self):
         )
 
 
-# skedm.simplex .smap method
+# sciedm.simplex .smap method
 def Validate_Xy(self, X, y):
     # validate_data() validates input data and sets or checks feature
     # names and counts of the input. This mutates the estimator setting
@@ -122,7 +122,7 @@ def Validate_Xy(self, X, y):
         raise ValueError(msg)
 
     if self._Data.shape[0] < 11:
-        msg = f"{self._name} skedm requires at least 10 observations."
+        msg = f"{self._name} sciedm requires at least 10 observations."
         raise ValueError(msg)
 
     if not len(self._columns):
@@ -137,7 +137,7 @@ def Validate_Xy(self, X, y):
         raise ValueError(msg)
 
 
-# skedm.simplex .smap method
+# sciedm.simplex .smap method
 def RemoveNan(self):
     """KDTree in Neighbors does not accept nan
     If ignoreNan remove Embedding rows with nan from lib_i, pred_i"""
@@ -167,7 +167,7 @@ def RemoveNan(self):
     self.PredictionValid()
 
 
-# skedm.simplex .smap method
+# sciedm.simplex .smap method
 def PredictionValid(self):
     """Validate there are pred_i to make a prediction"""
     if len(self.pred_i_) == 0:

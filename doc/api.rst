@@ -5,7 +5,7 @@ API Reference
 #############
 
 
-.. currentmodule:: skedm
+.. currentmodule:: sciedm
 
 Estimator
 =========

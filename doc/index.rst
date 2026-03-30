@@ -1,4 +1,4 @@
-.. skedm documentation master file, created by
+.. sciedm documentation master file, created by
    sphinx-quickstart on Mon Jan 18 14:44:12 2016.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
@@ -6,17 +6,17 @@
 :notoc:
 
 #####################################
-`skedm` : scikit-learn compliant EDM
+`sciedm` : scikit-learn compliant EDM
 #####################################
 
 **Date**: |today| **Version**: |version|
 
 **Useful links**:
-`Source Repository <https://github.com/SoftwareLiteracyFoundation/skedm>`__ |
-`Issues <https://github.com/SoftwareLiteracyFoundation/skedm/issues>`__ |
+`Source Repository <https://github.com/SoftwareLiteracyFoundation/sciedm>`__ |
+`Issues <https://github.com/SoftwareLiteracyFoundation/sciedm/issues>`__ |
 
-`skedm` is a scikit-learn compatible implementation of
-`Empirical Dynamic Modeling (EDM) <https://en.wikipedia.org/wiki/Empirical_dynamic_modeling>`__ based on the reference `pyEDM package <https://pypi.org/project/pyEDM/>`__ package. 
+`sciedm` is a scikit-learn compatible implementation of
+`Empirical Dynamic Modeling (EDM) <https://en.wikipedia.org/wiki/Empirical_dynamic_modeling>`__ based on the reference `pyEDM <https://pypi.org/project/pyEDM/>`__ package. 
 
 
 .. grid:: 1 2 2 2

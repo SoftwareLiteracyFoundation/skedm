@@ -14,9 +14,9 @@ Four use cases:
 from pandas import read_csv
 from matplotlib import pyplot as plt
 
-from skedm import Simplex
+from sciedm import Simplex
 
-df = read_csv("../skedm/data/Lorenz5D.csv")
+df = read_csv("../sciedm/data/Lorenz5D.csv")
 
 # library (training) and prediction (test) sets: unit-offset row number [start,stop]
 lib, pred = [1,500], [801,900]
@@ -43,7 +43,7 @@ smp4.fit(df)
 rho4 = smp4.score(df, df['V3'])
 
 # Plot
-from skedm.aux_func import PlotObsPred
+from sciedm.aux_func import PlotObsPred
 fig, ax = plt.subplots(2, 2, sharex=True, figsize=(8.5,6))
 (ax1, ax2, ax3, ax4) = (ax[0,0], ax[0,1], ax[1,0], ax[1,1])
 

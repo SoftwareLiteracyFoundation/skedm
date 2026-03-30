@@ -24,9 +24,9 @@ Empirical Dynamic Modeling
 
 Empirical dynamic modeling (EDM) is a framework for analysis and prediction of nonlinear dynamical systems with over 4,000 citations to its core algorithms: `convergent cross mapping (CCM)`_, simplex_, and `sequential locally weighted global linear maps (s-map)`_. EDM continues to evolve with new applications and algorithmic extensions as documented in the `EDM Wikipedia`_ article. An in-depth introduction is provided in `EDM docs`_.
 
-`skedm`
--------
-`skedm` provides a scikit-learn compliant implementation of core EDM algorithms along with utilities to discover appropriate embedding dimension and scale of state-dependence (nonlinearity). `skedm` classes are based on the :class:`sklearn.base.BaseEstimator` with `Regressor` and `Transformer` mixin's defining the core `skedm` classes:
+`sciedm`
+--------
+`sciedm` provides a scikit-learn compliant implementation of core EDM algorithms along with utilities to discover appropriate embedding dimension and scale of state-dependence (nonlinearity). `sciedm` classes are based on the :class:`sklearn.base.BaseEstimator` with `Regressor` and `Transformer` mixin's defining the core `sciedm` classes:
 
 =========================================================== ====================
 Class                                                       Function
@@ -38,12 +38,13 @@ Class                                                       Function
 :class:`PredictNonlinear (TransformerMixin, BaseEstimator)` nonlinear dependence
 =========================================================== ====================
 
-`skedm` leverages `pandas DataFrame` for I/O. Input data are expected to be a `DataFrame` with named columns including the target variable. The first column is expected to be a series of time or date values or strings, however this requirement can be removed with the `noTime=True` flag.
+`sciedm` leverages `pandas DataFrame` for I/O. Input data are expected to be a `DataFrame` with named columns including the target variable. The first column is expected to be a series of time or date values or strings, however this requirement can be removed with the `noTime=True` flag.
 
 
 Example Data
 ~~~~~~~~~~~~
-We use two data sets to illustrate `skedm`. First a 5-dimensional coupled system generated from the `Lorenz'96`_ model.
+We use two data sets to illustrate `sciedm`. First a 5-dimensional coupled system generated from the `Lorenz'96`_ model.
+
 
 .. Lorenz5D_V1_V2_V3:
 .. figure:: figures/Lorenz5D_V1_V2_V3.png
@@ -56,6 +57,7 @@ We use two data sets to illustrate `skedm`. First a 5-dimensional coupled system
 
 Second, cumulative daily water flow into Everglades National Park through the S12C, S12D and S333 spillways.
 
+
 .. SumFlow:
 .. figure:: figures/SumFlow.png
    :alt: Daily cumulative flow into ENP.
@@ -67,7 +69,7 @@ Second, cumulative daily water flow into Everglades National Park through the S1
 
 Predictors
 ----------
-`skedm` predictors include :class:`Simplex` and :class:`SMap`.
+`sciedm` predictors include :class:`Simplex` and :class:`SMap`.
 
 
 Simplex
@@ -76,20 +78,21 @@ Simplex
         
 Here we use `Simplex` to predict variable `V3` from a 4-D multivariate embedding of `[V1,V2,V4,V5]` of the 5-D Lorenz'96 system. To specify a multivariate embedding instead of a time-delay embedding we set `embedded=True` which sets the embedding dimension to `E=4`. The default prediction horizon is `Tp=1` points ahead. ::
 
-    >>> from skedm import Simplex
-    >>> df = read_csv("../skedm/data/Lorenz5D.csv")
+    >>> from sciedm import Simplex
+    >>> df = read_csv("../sciedm/data/Lorenz5D.csv")
     >>> lib, pred = [1,500], [801,900] # out of sample library : prediction sets
     >>> columns, target = ['V1','V2','V4','V5'], 'V3'
     >>> smpx = Simplex(columns=columns, target=target, lib=lib, pred=pred, embedded=True)
     >>> smpx.fit(df)
     >>> rho = smpx.score(df, df[target])
 
-    >>> from skedm.aux_func import PlotObsPred
+    >>> from sciedm.aux_func import PlotObsPred
     >>> ax = PlotObsPred(smpx.Projection_,
     ...      title=f"Simplex: {smpx.columns} : {smpx.target} rho={rho:.2f}")
 
+
 .. Simplex_CrossMap_embedded:
-.. figure:: figures/skedm_Simplex_CrossMap_embedded.png
+.. figure:: figures/Simplex_CrossMap_embedded.png
    :alt: Simplex projection of Lorenz'96 5-D 
    :align: center
    :scale: 80%
@@ -107,16 +110,17 @@ When an s-map model is tuned to the scale appropriate for the dynamics, it is kn
 
 Here we demonstrate :class:`SMap` in multivariate time series prediction and variable interaction. The nearest neighbor localization parameter `theta=8` weights local neighbors at small scale (distances) in the embedding. ::
 
-  >>> from skedm import SMap
+  >>> from sciedm import SMap
   >>> smap = SMap(columns=columns, target=target, theta=8.,
   ...             embedded=True, lib=lib, pred=pred)
   >>> smap.fit(df)
   >>> rho = smap.score(df, df[target])
   
-  >>> from skedm.aux_func import PlotObsPred, PlotCoeff
+  >>> from sciedm.aux_func import PlotObsPred, PlotCoeff
   >>> title = f"SMap: {smap.columns} : {smap.target} rho={rho:.2f}"
   >>> ax = PlotObsPred(smap.Projection_, title=title)
   >>> ax = PlotCoeff(smap.Coefficients_, title=title)
+
 
 .. SMap_CrossMap_embedded:
 .. figure:: figures/SMap_CrossMap_embedded.png
@@ -137,14 +141,15 @@ Convergent cross mapping (CCM) identifies whether two time series belong to the 
 
 Although we know the variables of the Lorenz'96 system are causally related, we use them as a demonstration. ::
 
-   >>> from skedm import CCM
-   >>> df = read_csv("../skedm/data/Lorenz5D.csv")
+   >>> from sciedm import CCM
+   >>> df = read_csv("../sciedm/data/Lorenz5D.csv")
    >>> libSizes = [20,50,100,200,500,900,1000]
    >>> ccm = CCM(columns='V1', target='V5', E=5, libSizes=libSizes)
    >>> ccm_V1_V5 = ccm.fit_transform(X=df)
 
-   >>> from skedm.aux_func import PlotCCM
+   >>> from sciedm.aux_func import PlotCCM
    >>> ax = PlotCCM(ccm.libMeans_, title=f"E={ccm.E} {ccm.columns} : {ccm.target}")
+
 
 .. CCM_Lorenz_V1_V5:
 .. figure:: figures/CCM_Lorenz_V1_V5.png
@@ -162,14 +167,15 @@ Embedding Dimension
 ~~~~~~~~~~~~~~~~~~~
 EDM methods are predicated on an `E` (or higher) dimensional embedding from which predictions are made and variables characterized. Robust estimation of embedding dimension remains an open problem (`Tan 2023`_) with EDM taking a data-driven and practical approach: optimization of system predictability as a function of embedding dimension. Here we estimate embedding dimension of the Everglades flow data with `exclusionRadius=3` to avoid serial correlation at time steps less than 3 days. ::
 
-  >>> from skedm import EmbedDimension
-  >>> df = read_csv("../skedm/data/S12CD-S333-SumFlow_1980-2005.csv")
+  >>> from sciedm import EmbedDimension
+  >>> df = read_csv("../sciedm/data/S12CD-S333-SumFlow_1980-2005.csv")
   >>> edim = EmbedDimension(columns='SumFlow', target='SumFlow', exclusionRadius=3)
   >>> EDim = edim.fit_transform(df)
   
-  >>> from skedm.aux_func import PlotEmbedDimension
+  >>> from sciedm.aux_func import PlotEmbedDimension
   >>> title = f"{edim.columns} Tp={edim.Tp} exclusionRadius={edim.exclusionRadius}"
   >>> ax = PlotEmbedDimension(edim.E_rho_, title=title)
+
 
 .. EmbedDim_SumFlow:
 .. figure:: figures/EmbedDim_SumFlow.png
@@ -187,12 +193,12 @@ Predict Nonlinear
 Class :class:`PredictNonlinear` evaluates `SMap` predictions across a range of `theta` values. ::
 
   >>> from pandas import read_csv
-  >>> from skedm import PredictNonlinear
-  >>> df = read_csv("../skedm/data/S12CD-S333-SumFlow_1980-2005.csv")
+  >>> from sciedm import PredictNonlinear
+  >>> df = read_csv("../sciedm/data/S12CD-S333-SumFlow_1980-2005.csv")
   >>> pnl = PredictNonlinear(columns='SumFlow', target='SumFlow', E=4, Tp=3)
   >>> theta_rho = pnl.fit_transform(df)
 
-  >>> from skedm.aux_func import PlotPredictNonlinear
+  >>> from sciedm.aux_func import PlotPredictNonlinear
   >>> title=f"{pnl.columns} : {pnl.target}  E={pnl.E}  Tp={pnl.Tp}"
   >>> PlotPredictNonlinear(pnl.theta_rho_, title=title)
 
