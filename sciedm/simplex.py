@@ -192,7 +192,7 @@ class Simplex(RegressorMixin, BaseEstimator):
         """Set_output for downstream pipeline compatibility
 
         To usefully label cross mapped components, use both _columns and
-        _target attributes in the generated name. 
+        _target attributes in the generated name.
         """
         check_is_fitted(self)
         return array([f"{self._columns}:{self._target}"], dtype=object)
@@ -330,7 +330,7 @@ class Simplex(RegressorMixin, BaseEstimator):
 
         # Matrix of knn_neighbors + Tp defines library target values
         knn_neighbors_Tp = self.knn_neighbors_ + self.Tp  # N x k
-        libTargetValues  = self._targetVec[knn_neighbors_Tp]
+        libTargetValues = self._targetVec[knn_neighbors_Tp]
 
         # Projection is average of weighted knn library target values
         self._projection = sum(weights * libTargetValues, axis=1) / weightRowSum
@@ -394,7 +394,7 @@ class Simplex(RegressorMixin, BaseEstimator):
 
         # If nan use ComputeError
         if any(isnan(y_pred)) or any(isnan(y[self.pred_i_])):
-            score = ComputeError(y[self.pred_i_], y_pred)['rho']
+            score = ComputeError(y[self.pred_i_], y_pred)["rho"]
         else:
             score = r2_score(
                 y[self.pred_i_], y_pred, sample_weight=sample_weight  # Limit to pred

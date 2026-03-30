@@ -25,7 +25,7 @@ class EmbedDimension(TransformerMixin, BaseEstimator):
     time-delay embedding dimension `E` for use in `Simplex`, `SMap` and `CCM`.
     A list of candidate embedding dimensions from 1-`maxE` is used to evaluate
     simplex predictability. The embedding dimension where predictability
-    saturates can be considered a viable estimate of `E`. 
+    saturates can be considered a viable estimate of `E`.
 
     Both time series `columns` & `target` must be present as named columns in X.
     `columns` and `target` can be the same representing a univariate observation,
@@ -64,7 +64,7 @@ class EmbedDimension(TransformerMixin, BaseEstimator):
     exclusionRadius : int
         Temporal exclusion radius for nearest neighbors. Neighbors closer than
         exclusionRadius indices from the target are ignored. Not applicable if
-        `lib` and `pred` are disjoint. 
+        `lib` and `pred` are disjoint.
 
     embedded : bool
         Is the input an embedding? If False (default) all columns will be time
@@ -173,7 +173,7 @@ class EmbedDimension(TransformerMixin, BaseEstimator):
         """This method does no work. It copies mutable parameters and sets
         some feature objects for scikit-learn compatibility. It does not
         call `validate_data()` as it is called in `transform` and again in
-        each `Simplex` object. 
+        each `Simplex` object.
 
         Parameters
         ----------
@@ -219,7 +219,7 @@ class EmbedDimension(TransformerMixin, BaseEstimator):
         A list of embedding dimensions `Evals` holds the `E` to be evaluated
         for simplex predictive fidelity. The list is used to create the
         `_poolArgs` iterable fed to a multiprocessing context which executes
-        the `SimplexE()` function for each iterable item. 
+        the `SimplexE()` function for each iterable item.
 
         Parameters
         ----------

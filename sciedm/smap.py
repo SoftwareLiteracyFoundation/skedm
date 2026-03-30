@@ -21,6 +21,7 @@ from pandas import DataFrame, Series, concat
 from .embed import Embed
 from .aux_func import ComputeError
 
+
 class SMap(RegressorMixin, BaseEstimator):
     """S-map projection of target variable from embedding library
 
@@ -202,7 +203,7 @@ class SMap(RegressorMixin, BaseEstimator):
         See https://scikit-learn.org/stable/developers/develop.html#
                     developer-api-for-set-output
         To usefully label cross mapped components, use both _columns and
-        _target attributes in the generated name. 
+        _target attributes in the generated name.
         """
         check_is_fitted(self)
         return array([f"{self._columns}:{self._target}"], dtype=object)
@@ -523,7 +524,7 @@ class SMap(RegressorMixin, BaseEstimator):
 
         # If nan use ComputeError
         if any(isnan(y_pred)) or any(isnan(y[self.pred_i_])):
-            score = ComputeError(y[self.pred_i_], y_pred)['rho']
+            score = ComputeError(y[self.pred_i_], y_pred)["rho"]
         else:
             score = r2_score(
                 y[self.pred_i_], y_pred, sample_weight=sample_weight  # Limit to pred

@@ -206,16 +206,17 @@ def SurrogateData(
 def PlotObsPred(df, title=None, ax=None):
     """Plot observations and predictions with default ρ, RMSE
 
-       If block=True show the plot and block for user to close
-       Return pyplot axis of plot"""
+    If ax is None call plt.show to display
+    Return pyplot axis of plot"""
     if title is None:
         stats = ComputeError(df["Observations"], df["Predictions"])
         title = f"ρ={round(stats['rho'], 3)}  RMSE={round(stats['RMSE'], 3)}"
 
     time_col = df.columns[0]
-    ax_ = df.plot(time_col, ["Observations", "Predictions"], title=title,
-                  ax=ax, linewidth=3)
-    
+    ax_ = df.plot(
+        time_col, ["Observations", "Predictions"], title=title, ax=ax, linewidth=3
+    )
+
     if ax is None:
         show()
 
@@ -225,8 +226,8 @@ def PlotObsPred(df, title=None, ax=None):
 def PlotCoeff(df, title=None, ax=None):
     """Plot S-Map coefficients
 
-       If ax is None call plt.show to display
-       Return pyplot axis of plot"""
+    If ax is None call plt.show to display
+    Return pyplot axis of plot"""
     time_col = df.columns[0]
     # Coefficient columns can be in any column
     coef_cols = [x for x in df.columns if time_col not in x]
@@ -241,18 +242,18 @@ def PlotCoeff(df, title=None, ax=None):
 def PlotCCM(df, title=None, ax=None):
     """Plot CCM
 
-       If ax is None call plt.show to display
-       Return pyplot axis of plot"""
-    if df.shape[1] == 3 :
+    If ax is None call plt.show to display
+    Return pyplot axis of plot"""
+    if df.shape[1] == 3:
         # CCM of two different variables
         ax_ = df.plot(
-            'LibSize', [df.columns[1], df.columns[2]], title=title, linewidth=3, ax=ax
+            "LibSize", [df.columns[1], df.columns[2]], title=title, linewidth=3, ax=ax
         )
-    elif df.shape[1] == 2 :
+    elif df.shape[1] == 2:
         # CCM of degenerate columns : target
-        ax_ = df.plot('LibSize', df.columns[1], title=title, linewidth=3, ax=ax)
+        ax_ = df.plot("LibSize", df.columns[1], title=title, linewidth=3, ax=ax)
 
-    ax_.set( xlabel = "Library Size", ylabel = "CCM ρ" )
+    ax_.set(xlabel="Library Size", ylabel="CCM ρ")
     axhline(y=0, linewidth=1)
 
     if ax is None:
@@ -264,10 +265,10 @@ def PlotCCM(df, title=None, ax=None):
 def PlotEmbedDimension(df, title=None, ax=None):
     """Plot embedding dimension
 
-       If ax is None call plt.show to display
-       Return pyplot axis of plot"""
-    ax_ = df.plot( 'E', 'rho', title=title, linewidth=3, ax=ax )
-    ax_.set(xlabel = "Embedding Dimension", ylabel = "Prediction Skill ρ")
+    If ax is None call plt.show to display
+    Return pyplot axis of plot"""
+    ax_ = df.plot("E", "rho", title=title, linewidth=3, ax=ax)
+    ax_.set(xlabel="Embedding Dimension", ylabel="Prediction Skill ρ")
 
     if ax is None:
         show()
@@ -278,11 +279,11 @@ def PlotEmbedDimension(df, title=None, ax=None):
 def PlotPredictNonlinear(df, title=None, ax=None):
     """Plot S-map Localisation (θ)
 
-       If ax is None call plt.show to display
-       Return pyplot axis of plot"""
-    ax_ = df.plot( 'theta', 'rho', title=title, linewidth=3, ax=ax )
-    ax_.set(xlabel = "S-map Localisation (θ)", ylabel = "Prediction Skill ρ")
-    
+    If ax is None call plt.show to display
+    Return pyplot axis of plot"""
+    ax_ = df.plot("theta", "rho", title=title, linewidth=3, ax=ax)
+    ax_.set(xlabel="S-map Localisation (θ)", ylabel="Prediction Skill ρ")
+
     if ax is None:
         show()
 

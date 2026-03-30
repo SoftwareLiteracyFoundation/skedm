@@ -19,10 +19,10 @@ from .aux_func import ComputeError
 
 
 class PredictNonlinear(TransformerMixin, BaseEstimator):
-    """Evaluate nonlinearity (state-dependence) 
+    """Evaluate nonlinearity (state-dependence)
 
     This class is a wrapper for `SMap`. The goal is to estimate the optimal `SMap`
-    localization parameter `theta`. 
+    localization parameter `theta`.
 
     Both time series `columns` & `target` must be present as named columns in X.
     `columns` and `target` can be the same representing a univariate observation,
@@ -61,7 +61,7 @@ class PredictNonlinear(TransformerMixin, BaseEstimator):
     exclusionRadius : int
         Temporal exclusion radius for nearest neighbors. Neighbors closer than
         exclusionRadius indices from the target are ignored. Not applicable if
-        `lib` and `pred` are disjoint. 
+        `lib` and `pred` are disjoint.
 
     embedded : bool
         Is the input an embedding? If False (default) all columns will be time
@@ -121,7 +121,7 @@ class PredictNonlinear(TransformerMixin, BaseEstimator):
         self,
         columns=None,
         target=None,
-        theta=[0.01,0.1,0.3,0.5,0.75,1,1.5,2,3,4,5,6,7,8,9],
+        theta=[0.01, 0.1, 0.3, 0.5, 0.75, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9],
         E=1,
         lib=None,
         pred=None,
@@ -139,7 +139,7 @@ class PredictNonlinear(TransformerMixin, BaseEstimator):
         """
         self.columns = columns
         self.target = target
-        self.theta = theta,
+        self.theta = theta
         self.E = E
         self.lib = lib
         self.pred = pred
@@ -172,7 +172,7 @@ class PredictNonlinear(TransformerMixin, BaseEstimator):
         """This method does no work. It copies mutable parameters and sets
         some feature objects for scikit-learn compatibility. It does not
         call `validate_data()` as it is called in `transform` and again in
-        each `Simplex` object. 
+        each `Simplex` object.
 
         Parameters
         ----------
@@ -198,7 +198,7 @@ class PredictNonlinear(TransformerMixin, BaseEstimator):
         self._target = copy(self.target)
         self._embedded = copy(self.embedded)
         self._noTime = copy(self.noTime)
-        self._theta = copy(self.theta)[0] # list has been embedded in tuple wth?
+        self._theta = copy(self.theta)
         self._name = "PredictNonlinear"
 
         # Declare / instantiate class objects for understandability
@@ -218,7 +218,7 @@ class PredictNonlinear(TransformerMixin, BaseEstimator):
         A list of embedding dimensions `Evals` holds the `E` to be evaluated
         for simplex predictive fidelity. The list is used to create the
         `_poolArgs` iterable fed to a multiprocessing context which executes
-        the `SimplexE()` function for each iterable item. 
+        the `SimplexE()` function for each iterable item.
 
         Parameters
         ----------

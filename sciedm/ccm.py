@@ -173,7 +173,6 @@ class CCM(TransformerMixin, BaseEstimator):
         self.mpMethod = mpMethod
         self.sequential = sequential
 
-
     def __sklearn_tags__(self):
         return Tags(
             estimator_type="transformer",
@@ -183,12 +182,17 @@ class CCM(TransformerMixin, BaseEstimator):
 
     def get_feature_names_out(self, input_features=None):
         """set_output for downstream pipeline compatibility
-        
+
         The 'output' is a DataFrame with [LibSize, Col:Target, Target:Col]"""
         check_is_fitted(self)
-        return array(["LibSize",
-                      f"{self._columns}:{self._target}",
-                      f"{self._target}:{self._columns}"], dtype=object)
+        return array(
+            [
+                "LibSize",
+                f"{self._columns}:{self._target}",
+                f"{self._target}:{self._columns}",
+            ],
+            dtype=object,
+        )
 
     # -------------------------------------------------------------------
     @_fit_context(prefer_skip_nested_validation=True)
@@ -405,7 +409,7 @@ class CCM(TransformerMixin, BaseEstimator):
 
                 # Matrix of knn_neighbors + Tp defines library target values
                 knn_neighbors_Tp = S.knn_neighbors_ + S.Tp  # Npred x k
-                libTargetValues  = S._targetVec[knn_neighbors_Tp]
+                libTargetValues = S._targetVec[knn_neighbors_Tp]
                 # Code from Simplex:Project ----------------------------------
 
                 # Projection is average of weighted knn library target values
