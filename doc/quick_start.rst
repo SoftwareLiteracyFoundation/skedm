@@ -4,12 +4,23 @@
 Getting started
 ###############
 
+.. _sciedm: https://pypi.org/project/sciedm/
+.. _Github repository: https://github.com/SoftwareLiteracyFoundation/sciedm
 
-scikit-learn compatible EDM
-===========================
+Installation
+============
+`sciedm` can be installed from the sciedm_ Python Package Index or the `Github repository`_.
 
-Download sciedm
---------------
+Install from PyPI
+-----------------
+
+.. prompt:: bash $
+
+  python -m pip install sciedm
+
+
+Install from Github
+-------------------
 
 Clone the ``sciedm`` repository:
 
@@ -23,5 +34,4 @@ Install `sciedm`:
 
   cd sciedm
   python -m pip install .
-
 

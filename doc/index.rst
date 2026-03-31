@@ -3,6 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+.. _Empirical Dynamic Modeling (EDM): https://en.wikipedia.org/wiki/Empirical_dynamic_modeling
+.. _EDM docs: https://sugiharalab.github.io/EDM_Documentation/
+.. _pyEDM: https://pypi.org/project/pyEDM/
+.. _User Guide: https://sciedm.readthedocs.io/en/latest/user_guide.html
+.. _Source Repository: https://github.com/SoftwareLiteracyFoundation/sciedm
+.. _Issues: https://github.com/SoftwareLiteracyFoundation/sciedm/issues
+
 :notoc:
 
 #####################################
@@ -12,14 +19,14 @@
 **Date**: |today| **Version**: |version|
 
 **Useful links**:
-`Source Repository <https://github.com/SoftwareLiteracyFoundation/sciedm>`__ |
-`Issues <https://github.com/SoftwareLiteracyFoundation/sciedm/issues>`__ |
+`Source Repository`_ |
+`Issues`_ |
 
 `sciedm` is a scikit-learn compatible implementation of
-`Empirical Dynamic Modeling (EDM) <https://en.wikipedia.org/wiki/Empirical_dynamic_modeling>`__ based on the reference `pyEDM <https://pypi.org/project/pyEDM/>`__ package. 
+`Empirical Dynamic Modeling (EDM)`_ based on the reference `pyEDM`_ package. An in-depth introduction to EDM is provided in `EDM docs`_. Refer to the `User Guide`_ for `sciedm` application.
 
 
-.. grid:: 1 2 2 2
+.. grid:: 1 4 4 4
     :gutter: 4
     :padding: 2 2 0 0
     :class-container: sd-text-center

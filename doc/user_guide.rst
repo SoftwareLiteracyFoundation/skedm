@@ -10,7 +10,7 @@ Empirical Dynamic Modeling
 --------------------------
 
 .. _EDM Wikipedia: https://en.wikipedia.org/wiki/Empirical_dynamic_modeling
-.. _EDM Docs: https://sugiharalab.github.io/EDM_Documentation/
+.. _EDM docs: https://sugiharalab.github.io/EDM_Documentation/
 .. _convex simplex: https://en.wikipedia.org/wiki/Simplex
 .. _convergent cross mapping (CCM): https://www.science.org/doi/10.1126/science.1227079
 .. _Convergent cross mapping (CCM): https://www.science.org/doi/10.1126/science.1227079
@@ -45,7 +45,6 @@ Example Data
 ~~~~~~~~~~~~
 We use two data sets to illustrate `sciedm`. First a 5-dimensional coupled system generated from the `Lorenz'96`_ model.
 
-
 .. Lorenz5D_V1_V2_V3:
 .. figure:: figures/Lorenz5D_V1_V2_V3.png
    :alt: Lorenz'96 5-D 
@@ -54,9 +53,7 @@ We use two data sets to illustrate `sciedm`. First a 5-dimensional coupled syste
 
    First 3 components of a Lorenz'96 5-D system.
 
-
 Second, cumulative daily water flow into Everglades National Park through the S12C, S12D and S333 spillways.
-
 
 .. SumFlow:
 .. figure:: figures/SumFlow.png
@@ -65,7 +62,6 @@ Second, cumulative daily water flow into Everglades National Park through the S1
    :scale: 80%
 
    Daily cumulative flow into Everglades National Park through S12C,D S333.
-
 
 Predictors
 ----------
@@ -90,7 +86,6 @@ Here we use `Simplex` to predict variable `V3` from a 4-D multivariate embedding
     >>> ax = PlotObsPred(smpx.Projection_,
     ...      title=f"Simplex: {smpx.columns} : {smpx.target} rho={rho:.2f}")
 
-
 .. Simplex_CrossMap_embedded:
 .. figure:: figures/Simplex_CrossMap_embedded.png
    :alt: Simplex projection of Lorenz'96 5-D 
@@ -98,7 +93,6 @@ Here we use `Simplex` to predict variable `V3` from a 4-D multivariate embedding
    :scale: 80%
 
    Simplex prediction at `Tp=1` of Lorenz'96 5-D variable `V3` from a multivariate embedding of `['V1','V2','V4','V5']`
-
 
 Even though the embedding does not contain `V3` the shared dynamical information in the other variables enables good prediction of `V3` through simplex cross mapping.
 
@@ -121,7 +115,6 @@ Here we demonstrate :class:`SMap` in multivariate time series prediction and var
   >>> ax = PlotObsPred(smap.Projection_, title=title)
   >>> ax = PlotCoeff(smap.Coefficients_, title=title)
 
-
 .. SMap_CrossMap_embedded:
 .. figure:: figures/SMap_CrossMap_embedded.png
    :alt: SMap projection of Lorenz'96 5-D 
@@ -129,7 +122,6 @@ Here we demonstrate :class:`SMap` in multivariate time series prediction and var
    :scale: 80%
 
    SMap prediction at `Tp=1` of Lorenz'96 5-D variable `V3` from a multivariate embedding of `['V1','V2','V4','V5']` and intervariable derivatives (coefficients).
-
 
 Transformers
 ------------
@@ -150,7 +142,6 @@ Although we know the variables of the Lorenz'96 system are causally related, we 
    >>> from sciedm.aux_func import PlotCCM
    >>> ax = PlotCCM(ccm.libMeans_, title=f"E={ccm.E} {ccm.columns} : {ccm.target}")
 
-
 .. CCM_Lorenz_V1_V5:
 .. figure:: figures/CCM_Lorenz_V1_V5.png
    :alt: CCM Lorenz'96 V1:V5
@@ -158,7 +149,6 @@ Although we know the variables of the Lorenz'96 system are causally related, we 
    :scale: 80%
 
    CCM between Lorenz'96 V1 and V5.
-
 
 As expected both mappings V1:V5 (V5 drives V1) and V5:V1 (V1 drives V5) exhibit convergence and high predictability.
 
@@ -176,7 +166,6 @@ EDM methods are predicated on an `E` (or higher) dimensional embedding from whic
   >>> title = f"{edim.columns} Tp={edim.Tp} exclusionRadius={edim.exclusionRadius}"
   >>> ax = PlotEmbedDimension(edim.E_rho_, title=title)
 
-
 .. EmbedDim_SumFlow:
 .. figure:: figures/EmbedDim_SumFlow.png
    :alt: Embedding dimension of Everglades flow
@@ -184,7 +173,6 @@ EDM methods are predicated on an `E` (or higher) dimensional embedding from whic
    :scale: 80%
 
    Simplex prediction correlation of Everglades flow as a function of embedding dimension.
-
 
 The result suggests an embedding dimension of `E=4` is a reasonable choice for simplex and s-map application. 
 
@@ -202,7 +190,6 @@ Class :class:`PredictNonlinear` evaluates `SMap` predictions across a range of `
   >>> title=f"{pnl.columns} : {pnl.target}  E={pnl.E}  Tp={pnl.Tp}"
   >>> PlotPredictNonlinear(pnl.theta_rho_, title=title)
 
-
 .. PredictNL_SumFlow:
 .. figure:: figures/PredictNL_SumFlow.png
    :alt: S-map theta dependence of Everglades flow
@@ -210,6 +197,5 @@ Class :class:`PredictNonlinear` evaluates `SMap` predictions across a range of `
    :scale: 80%
 
    SMap prediction correlation of Everglades flow as a function of SMap localization parameter `theta`.
-
 
 Here we find evidence of nonlinear state dependence with peak predictability at `theta = 3` at `E = 4` `Tp = 3`. 
